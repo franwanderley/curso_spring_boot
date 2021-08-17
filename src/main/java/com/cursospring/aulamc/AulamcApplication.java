@@ -1,20 +1,11 @@
 package com.cursospring.aulamc;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import com.cursospring.aulamc.domain.Categoria;
-import com.cursospring.aulamc.domain.Cidade;
-import com.cursospring.aulamc.domain.Cliente;
-import com.cursospring.aulamc.domain.Endereco;
-import com.cursospring.aulamc.domain.Estado;
-import com.cursospring.aulamc.domain.Produto;
-import com.cursospring.aulamc.domain.enums.TipoCliente;
-import com.cursospring.aulamc.repositories.CategoriaRepository;
-import com.cursospring.aulamc.repositories.CidadeRepository;
-import com.cursospring.aulamc.repositories.ClienteRepository;
-import com.cursospring.aulamc.repositories.EnderecoRepository;
-import com.cursospring.aulamc.repositories.EstadoRepository;
-import com.cursospring.aulamc.repositories.ProdutoRepository;
+import com.cursospring.aulamc.domain.*;
+import com.cursospring.aulamc.domain.enums.*;
+import com.cursospring.aulamc.repositories.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -36,6 +27,12 @@ public class AulamcApplication implements CommandLineRunner{
 	private ClienteRepository cliRepo;
 	@Autowired
 	private EnderecoRepository endRepo;
+	@Autowired
+	private PedidoRepository pedRepo;
+	@Autowired
+	private PagamentoRepository pgtoRepo;
+	@Autowired
+	private ItemPedidoRepository itemPRepo;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(AulamcApplication.class, args);
@@ -74,6 +71,29 @@ public class AulamcApplication implements CommandLineRunner{
 		Endereco end1 = new Endereco(null, "Rua Flores", "300", "APTO 303", "Jardim", "38220834", cliente1, c1);
 		Endereco end2 = new Endereco(null, "Rua Pintor Lemos", "369", "Rua do 96 até o fim", "Santa Casa", "62010720", cliente1, c2);
 
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cliente1, end1); 
+		Pedido ped2 = new Pedido(null, sdf.parse("10/10/2017 19:35"), cliente1, end2);
+		
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1);
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2,sdf.parse("20/10/2017 00:00"), null);
+		ped2.setPagamento(pagto2);
+
+		cliente1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+
+		ItemPedido itemP1 = new ItemPedido(ped1, p1, 0.00, 1, 2000.00); 
+		ItemPedido itemP2 = new ItemPedido(ped1, p3, 0.00, 2, 80.00); 
+		ItemPedido itemP3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
+		
+		p1.getItens().add(itemP1);
+		p3.getItens().add(itemP2);
+		p2.getItens().add(itemP3);
+
+		ped1.getItens().addAll(Arrays.asList(itemP1, itemP2));
+		ped2.getItens().add(itemP3);
+
 	  //Usando o repository para salvar no banco de dados
 	  estRepo.saveAll(Arrays.asList(est1, est2));	 
 	  cidRepo.saveAll(Arrays.asList(c1, c2,c3));	 
@@ -81,6 +101,9 @@ public class AulamcApplication implements CommandLineRunner{
      proRepo.saveAll(Arrays.asList(p1,p2,p3));
 	  cliRepo.save(cliente1);
 	  endRepo.saveAll(Arrays.asList(end1, end2));
+     pedRepo.saveAll(Arrays.asList(ped1, ped2));
+     pgtoRepo.saveAll(Arrays.asList(pagto1, pagto2));
+	  itemPRepo.saveAll(Arrays.asList(itemP1, itemP2, itemP3));
 	}
 
 }

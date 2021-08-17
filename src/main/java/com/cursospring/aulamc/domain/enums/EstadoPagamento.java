@@ -1,17 +1,15 @@
 package com.cursospring.aulamc.domain.enums;
 
-public enum TipoCliente {
-   PESSOAFISICA(1, "Pessoa Fisica"),
-   PESSOAJURIDICA(2, "Pessoa Juridica");
-
+public enum EstadoPagamento {
+   PENDENTE(1, "Pagamento Pendente"),
+   QUITADO(2, "Pagamento Quitado"),
+   CANCELADO(3, "Pagamento Cancelado");
+   
    private int cod;
    private String descricao; 
 
-   private TipoCliente(int cod, String descricao){
-      this.cod = cod;
-      this.descricao = descricao;
-   }
-   private TipoCliente(){
+   private EstadoPagamento(int cod, String descricao){
+
    }
 
    public String getDescricao() {
@@ -30,10 +28,10 @@ public enum TipoCliente {
       this.cod = cod;
    }
 
-   public static TipoCliente toEnum(Integer cod){
+   public static EstadoPagamento toEnum(Integer cod){
       if(cod == null)
          return null;
-      for(TipoCliente x : TipoCliente.values()){
+      for(EstadoPagamento x : EstadoPagamento.values()){
          if(cod.equals(x.getCod()))
             return x;
       }

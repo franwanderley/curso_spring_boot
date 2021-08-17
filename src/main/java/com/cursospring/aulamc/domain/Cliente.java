@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.cursospring.aulamc.domain.enums.TipoCliente;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Cliente implements Serializable {
@@ -30,17 +31,28 @@ public class Cliente implements Serializable {
    
    @OneToMany(mappedBy = "cliente")
    private List<Endereco> enderecos = new ArrayList<>();
+   @OneToMany(mappedBy = "cliente")
+   private List<Pedido> pedidos = new ArrayList<>();
+   @JsonManagedReference
    @ElementCollection
-   @CollectionTable(name = "TELEFONE")
-   //Entidade fraca
+   @CollectionTable(name = "TELEFONE") //Entidade fraca
    private Set<String> telefones = new HashSet<>(); 
    
+   public Cliente() {
+   }
    public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo) {
+      super();
       this.id = id;
       this.nome = nome;
       this.email = email;
       this.CpfOuCnpj = cpfOuCnpj;
       this.tipo = tipo.getCod();
+   }
+   public List<Pedido> getPedidos() {
+      return pedidos;
+   }
+   public void setPedidos(List<Pedido> pedidos) {
+      this.pedidos = pedidos;
    }
    public Set<String> getTelefones() {
       return telefones;
@@ -84,6 +96,29 @@ public class Cliente implements Serializable {
    public void setId(Integer id) {
       this.id = id;
    }
-   public Cliente() {
+
+   @Override
+   public int hashCode(){
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      return result;
+   }
+   @Override
+   public boolean equals(Object obj){
+      if(this == obj)
+         return true;
+      if(obj == null)
+         return false;
+      if(getClass() == obj.getClass())
+         return false;
+      Cliente other = (Cliente) obj;
+      if(id == null){
+         if(other.id == null)
+         return false;
+      }
+      else if(!id.equals(other.id))
+         return false;
+      return true;
    }
 }
