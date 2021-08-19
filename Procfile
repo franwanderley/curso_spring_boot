@@ -1,0 +1,1 @@
+web: java -DServer.port=$PORT -DSpring.profiles.active=prod $JAVA_OPTS -jar target/aulamc-0.0.1-SNAPSHOT.jar
